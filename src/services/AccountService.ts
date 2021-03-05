@@ -31,6 +31,13 @@ export default class AccountService {
         return accounts;
     }
 
+    async getById(id: number): Promise<Account|null> {
+
+        const account = await this.accountRepository.getById(id);
+
+        return account;
+    }
+
     async update(id: number, updateData: Partial<AccountCreationAttributes>): Promise<Account | undefined> {
         const account = await this.accountRepository.getById(id);
 

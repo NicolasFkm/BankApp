@@ -1,63 +1,39 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
 import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
-import { AccountCreationAttributes } from '@models/Account';
-import EntityCollectionResponse from '@models/responses/EntityCollectionResponse';
+import { PaymentCreationAttributes } from '@models/Payment';
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
-import AccountService from '@services/AccountService';
+import PaymentService from '@services/PaymentService';
 import { Response, Request } from 'express';
 
-export default class AccountController {
+export default class PaymentController {
 
-    public accountService: AccountService;
+    public paymentService: PaymentService;
 
-    constructor(){
-        this.accountService = new AccountService();;
+    constructor() {
+        this.paymentService = new PaymentService();
     }
 
-    public postCreate = async(req: Request, res: Response) : Promise<Response> => {
-        try{
-            let { name, accountNumber, password }: { name: string, accountNumber: number, password: string,}  = req.body;
-            
-            const account = {name, accountNumber, password} as AccountCreationAttributes;
+    public postCreate = async (req: Request, res: Response): Promise<Response> => {
+        try {
+            let { value, description }: { value: number, description?: string } = req.body;
 
-            const createdAccount = await this.accountService.create(account);
-            
-            let response = new EntityResponse(createdAccount, req.url);
-            
+            const payment = { value, description } as PaymentCreationAttributes;
+
+            const createdPayment = await this.paymentService.create(payment);
+
+            let response = new EntityResponse(createdPayment, req.url);
+
             let status = HttpStatus.SUCCESS;
-            
+
             return res.status(status).send(response);
         }
-        catch(error){
+        catch (error) {
             let status = HttpStatus.INTERNAL_SERVER_ERROR;
             let errorResponse = new ErrorResponse(req.url);
-            
-            if(error instanceof InvalidArgumentException){
-                status = HttpStatus.BAD_REQUEST;
-                errorResponse.message = error.message;
-            }
 
-            return res.status(status).send(errorResponse);
-        }
-    }
-    
-    public getAll = async(req: Request, res: Response) : Promise<Response> => {
-        try{
-            const createdAccount = await this.accountService.getAll();
-            
-            let response = new EntityCollectionResponse(createdAccount, req.url);
-            
-            let status = HttpStatus.SUCCESS;
-            
-            return res.status(status).send(response);
-        }
-        catch(error){
-            let status = HttpStatus.INTERNAL_SERVER_ERROR;
-            let errorResponse = new ErrorResponse(req.url);
-            
-            if(error instanceof InvalidArgumentException){
+            if (error instanceof InvalidArgumentException) {
                 status = HttpStatus.BAD_REQUEST;
                 errorResponse.message = error.message;
             }
@@ -70,7 +46,7 @@ export default class AccountController {
         try{
             let { id } = req.params;
             
-            const account = await this.accountService.getById(+id);
+            const account = await this.paymentService.getById(+id);
             
             if(account == null){
                 throw new DataNotFoundException();

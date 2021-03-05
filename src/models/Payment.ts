@@ -4,6 +4,7 @@ import { Account } from "./Account";
 export interface PaymentAttributes {
 	id: number;
     value: number;
+	description?: string;
 }
 
 export interface PaymentCreationAttributes extends Optional<PaymentAttributes, "id"> { }
@@ -11,6 +12,7 @@ export interface PaymentCreationAttributes extends Optional<PaymentAttributes, "
 export class Payment extends Model<PaymentAttributes, PaymentCreationAttributes>{
     public id!: number;
     public value: number;
+    public description: string;
     
     public account?: Account;
 
@@ -31,6 +33,9 @@ export const initPayment = (sequelize: Sequelize) => {
 			},
             value: {
                 type: DataTypes.DECIMAL
+            },
+            description: {
+                type: DataTypes.STRING
             }
 		},
 		{
