@@ -8,6 +8,7 @@ export interface AccountAttributes {
 	name: string;
     accountNumber: number;
     password: string;
+    balance?: number;
 }
 
 export interface AccountCreationAttributes extends Optional<AccountAttributes, "id"> { }
@@ -17,6 +18,7 @@ export class Account extends Model<AccountAttributes, AccountCreationAttributes>
     public name!: string;
     public accountNumber: number;
     public password: string;
+    public balance: number;
     
     public payments: Payment[];
     public withdrawals: Withdraw[];
@@ -40,7 +42,7 @@ export const initAccount = (sequelize: Sequelize) => {
 	Account.init(
 		{
 			id: {
-				type: DataTypes.INTEGER.UNSIGNED,
+				type: DataTypes.INTEGER,
 				autoIncrement: true,
 				primaryKey: true
 			},
@@ -55,6 +57,10 @@ export const initAccount = (sequelize: Sequelize) => {
             password: {
                 type: DataTypes.STRING,
                 allowNull: false
+            },
+            balance: {
+                type: DataTypes.DECIMAL,
+                defaultValue: 0
             }
 		},
 		{

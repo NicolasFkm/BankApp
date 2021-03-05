@@ -27,7 +27,7 @@ export const initWithdraw = (sequelize: Sequelize) => {
 	Withdraw.init(
 		{
 			id: {
-				type: DataTypes.INTEGER.UNSIGNED,
+				type: DataTypes.INTEGER,
 				autoIncrement: true,
 				primaryKey: true
 			},
