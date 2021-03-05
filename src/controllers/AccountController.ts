@@ -100,5 +100,107 @@ export default class AccountController {
         }
     }
 
+    public getPayments = async(req: Request, res: Response) : Promise<Response> => {
+        try{
+            let { id } = req.params;
+            
+            const payments = await this.accountService.getAccountPaymentsById(+id);
+            
+            if(payments == undefined || payments.length ==  0){
+                throw new DataNotFoundException();
+            }
+
+            let response = new EntityCollectionResponse(payments, req.url);
+            
+            let status = HttpStatus.SUCCESS;
+            
+            return res.status(status).send(response);
+        }
+        catch(error){
+            let status = HttpStatus.INTERNAL_SERVER_ERROR;
+            let errorResponse = new ErrorResponse(req.url);
+            
+            if(error instanceof InvalidArgumentException){
+                status = HttpStatus.BAD_REQUEST;
+                errorResponse.message = error.message;
+            }
+            
+            if(error instanceof DataNotFoundException){
+                status = HttpStatus.NOT_FOUND;
+                errorResponse.message = error.message;
+            }
+
+            return res.status(status).send(errorResponse);
+        }
+    }
+
+    public getDeposits = async(req: Request, res: Response) : Promise<Response> => {
+        try{
+            let { id } = req.params;
+            
+            const deposits = await this.accountService.getAccountDepositsById(+id);
+            
+            if(deposits == undefined || deposits.length == 0 ){
+                throw new DataNotFoundException();
+            }
+
+            let response = new EntityCollectionResponse(deposits, req.url);
+            
+            let status = HttpStatus.SUCCESS;
+            
+            return res.status(status).send(response);
+        }
+        catch(error){
+            let status = HttpStatus.INTERNAL_SERVER_ERROR;
+            let errorResponse = new ErrorResponse(req.url);
+            
+            if(error instanceof InvalidArgumentException){
+                status = HttpStatus.BAD_REQUEST;
+                errorResponse.message = error.message;
+            }
+            
+            if(error instanceof DataNotFoundException){
+                status = HttpStatus.NOT_FOUND;
+                errorResponse.message = error.message;
+            }
+
+            return res.status(status).send(errorResponse);
+        }
+    }
+
+    public getWithdrawals = async(req: Request, res: Response) : Promise<Response> => {
+        try{
+            let { id } = req.params;
+            
+            const withdrawals = await this.accountService.getAccountWithdrawalsById(+id);
+            
+            if(withdrawals == undefined || withdrawals.length == 0){
+                throw new DataNotFoundException();
+            }
+
+            let response = new EntityCollectionResponse(withdrawals, req.url);
+            
+            let status = HttpStatus.SUCCESS;
+            
+            return res.status(status).send(response);
+        }
+        catch(error){
+            let status = HttpStatus.INTERNAL_SERVER_ERROR;
+            let errorResponse = new ErrorResponse(req.url);
+            
+            if(error instanceof InvalidArgumentException){
+                status = HttpStatus.BAD_REQUEST;
+                errorResponse.message = error.message;
+            }
+            
+            if(error instanceof DataNotFoundException){
+                status = HttpStatus.NOT_FOUND;
+                errorResponse.message = error.message;
+            }
+
+            return res.status(status).send(errorResponse);
+        }
+    }
+
 
 }

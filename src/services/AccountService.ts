@@ -3,6 +3,9 @@ import { Account, AccountAttributes, AccountCreationAttributes } from "@models/A
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 import AccountRepository from '@repositories/AccountRepository';
+import { Payment } from "@models/Payment";
+import { Deposit } from "@models/Deposit";
+import { Withdraw } from "@models/Withdraw";
 
 export default class AccountService {
 
@@ -36,6 +39,27 @@ export default class AccountService {
         const account = await this.accountRepository.getById(id);
 
         return account;
+    }
+
+    async getAccountPaymentsById(id: number): Promise<Payment[]|undefined> {
+
+        const account = await this.accountRepository.getById(id);
+
+        return account?.payments;
+    }
+
+    async getAccountDepositsById(id: number): Promise<Deposit[]|undefined> {
+
+        const account = await this.accountRepository.getById(id);
+
+        return account?.deposits;
+    }
+
+    async getAccountWithdrawalsById(id: number): Promise<Withdraw[]|undefined> {
+
+        const account = await this.accountRepository.getById(id);
+
+        return account?.withdrawals;
     }
 
     async update(id: number, updateData: Partial<AccountCreationAttributes>): Promise<Account | undefined> {
