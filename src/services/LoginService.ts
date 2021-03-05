@@ -7,18 +7,21 @@ import Login from "@models/Login";
 
 export default class LoginService {
 
-    private _salt: number = 12;
     public accountRepository: AccountRepository;
 
     constructor(){
         this.accountRepository = new AccountRepository();
     }
 
-    async authenticate(login: Login) : Promise<boolean> {
-        let hashPassword = await bcrypt.hash(login.password, this._salt);
+    public authenticate = async(login: Login) : Promise<boolean> => {
+        const account = await this.accountRepository.getById(login.id);
+        
+        if(account == null){
+            return false;
+        }
 
-        const account = await this.accountRepository.getByLoginData(login.accountNumber, hashPassword);
-
-        return account != null;
+        const isValid = bcrypt.compareSync(login.password, account?.password!);
+        
+        return isValid;
     }
 }

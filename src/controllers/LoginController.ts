@@ -14,10 +14,12 @@ export default class LoginController {
         this.loginService = new LoginService();
     }
 
-    async postAuthenticate(req: Request, res: Response) : Promise<void> {
+    public postAuthenticate =  async (req: Request, res: Response) : Promise<void> => {
         try{
-            let { login, ...body}: {login: Login, body: any}  = req.body;
+            let { id, password, ...body}: {id: number, password:string, body: any}  = req.body;
             
+            const login = new Login(id, password);
+
             const isAuthenticated = await this.loginService.authenticate(login);
             
             let response = new StatusResponse(req.url, isAuthenticated);
@@ -31,10 +33,10 @@ export default class LoginController {
         catch(error){
             let status = HttpStatus.INTERNAL_SERVER_ERROR;
             let errorResponse = new ErrorResponse(req.url);
-            errorResponse.message = error.message;
             
             if(error instanceof InvalidArgumentException){
                 status = HttpStatus.BAD_REQUEST;
+                errorResponse.message = error.message;
             }
 
             res.status(status).send(errorResponse);

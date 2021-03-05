@@ -1,6 +1,7 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
 import { AccountCreationAttributes } from '@models/Account';
+import EntityCollectionResponse from '@models/responses/EntityCollectionResponse';
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
 import AccountService from '@services/AccountService';
@@ -31,10 +32,33 @@ export default class AccountController {
         catch(error){
             let status = HttpStatus.INTERNAL_SERVER_ERROR;
             let errorResponse = new ErrorResponse(req.url);
-            errorResponse.message = error.message;
             
             if(error instanceof InvalidArgumentException){
                 status = HttpStatus.BAD_REQUEST;
+                errorResponse.message = error.message;
+            }
+
+            return res.status(status).send(errorResponse);
+        }
+    }
+    
+    public getAll = async(req: Request, res: Response) : Promise<Response> => {
+        try{
+            const createdAccount = await this.accountService.getAll();
+            
+            let response = new EntityCollectionResponse(createdAccount, req.url);
+            
+            let status = HttpStatus.SUCCESS;
+            
+            return res.status(status).send(response);
+        }
+        catch(error){
+            let status = HttpStatus.INTERNAL_SERVER_ERROR;
+            let errorResponse = new ErrorResponse(req.url);
+            
+            if(error instanceof InvalidArgumentException){
+                status = HttpStatus.BAD_REQUEST;
+                errorResponse.message = error.message;
             }
 
             return res.status(status).send(errorResponse);

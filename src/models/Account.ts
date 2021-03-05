@@ -6,7 +6,6 @@ import { Deposit } from "./Deposit";
 export interface AccountAttributes {
 	id: number;
 	name: string;
-    accountNumber: number;
     password: string;
     balance?: number;
 }
@@ -16,7 +15,6 @@ export interface AccountCreationAttributes extends Optional<AccountAttributes, "
 export class Account extends Model<AccountAttributes, AccountCreationAttributes> {
     public id!: number;
     public name!: string;
-    public accountNumber: number;
     public password: string;
     public balance: number;
     
@@ -48,10 +46,6 @@ export const initAccount = (sequelize: Sequelize) => {
 			},
             name: {
                 type: DataTypes.STRING,
-                allowNull: false
-            },
-            accountNumber:{
-                type: DataTypes.TINYINT,
                 allowNull: false
             },
             password: {

@@ -8,7 +8,8 @@ export class Routes {
 
   public routes(app: Application): void {
     app.route("/account").post(this.accountController.postCreate);
+    app.route("/account").get(this.accountController.getAll);
 
-    app.route("/login").get(this.loginController.postAuthenticate);
+    app.route("/login").post(this.loginController.postAuthenticate);
   }
 }

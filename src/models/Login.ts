@@ -1,9 +1,9 @@
 export default class Login{
-    public accountNumber: number;
+    public id: number;
     public password: string;
 
-    constructor(accountNumber: number, password: string){
-        this.accountNumber = accountNumber;
+    constructor(id: number, password: string){
+        this.id = id;
         this.password = password;
     }
 }
