@@ -1,47 +1,22 @@
-import { Optional, Model, Association, DataTypes, Sequelize, HasOneGetAssociationMixin } from "sequelize";
-import { Account } from './Account';
+import mongoose, { Schema, model, Document } from 'mongoose';
 
-export interface DepositAttributes {
-	id: number;
-	value: number;
+export interface IDeposit extends Document {
+    value: number;
+    account: Account;
 }
 
-export interface DepositCreationAttributes extends Optional<DepositAttributes, "id"> { }
+const depositSchema = new Schema({
+    value: {
+        type: Number,
+        required: true
+    },
+    account: {
+        type: Schema.Types.ObjectId,
+        ref: "Account"
+    }
+},
+    {
+        timestamps: { createdAt: true, updatedAt: true }
+    });
 
-export class Deposit extends Model<DepositAttributes, DepositCreationAttributes>{
-    public id!: number;
-	public value: number;;
-
-    public account: Account;
-
-    public getAccount: HasOneGetAssociationMixin<Account>;
-
-    public static associations: {
-		account: Association<Account, Deposit>,
-	};
-}
-
-export const initDeposit = (sequelize: Sequelize) => {
-	Deposit.init(
-		{
-			id: {
-				type: DataTypes.INTEGER,
-				autoIncrement: true,
-				primaryKey: true
-			},
-			value: {
-				type: DataTypes.DECIMAL
-			}
-		},
-		{
-			tableName: "Deposit",
-			timestamps: false,
-      		paranoid: true,
-			sequelize: sequelize
-		}
-	);
-}
-
-export const associateDeposit = () => {
-	Deposit.belongsTo(Account);
-};
+export default mongoose.model<IDeposit>('Deposits', depositSchema);

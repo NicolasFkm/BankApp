@@ -1,16 +1,17 @@
-import { Payment, PaymentCreationAttributes } from "@models/Payment";
+import Payment, { IPayment } from "@models/Payment";
 
 export default class PaymentRepository {
 
-    async getById(id: number): Promise<Payment | null> {
-        const withdraw = await Payment.findByPk(id, { include: [{ all: true }] });
+    async getById(id: number): Promise<IPayment | null> {
+        const withdraw = await Payment.findById(id)
+            .populate("account");
 
         return withdraw;
     }
 
-    async add(account: PaymentCreationAttributes): Promise<Payment> {
+    async add(payment: IPayment): Promise<IPayment> {
 
-        const createdPayment = await Payment.create(account);
+        const createdPayment = await Payment.create(payment);
 
         return createdPayment;
     }

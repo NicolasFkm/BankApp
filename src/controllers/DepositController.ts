@@ -1,7 +1,7 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
 import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
-import { DepositCreationAttributes } from '@models/Deposit';
+import { IDeposit } from '@models/Deposit';
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
 import DepositService from '@services/DepositService';
@@ -19,7 +19,7 @@ export default class DepositController {
         try {
             let { value }: { value: number } = req.body;
 
-            const deposit = { value } as DepositCreationAttributes;
+            const deposit = { value } as IDeposit;
 
             const createdDeposit = await this.depositService.create(deposit);
 

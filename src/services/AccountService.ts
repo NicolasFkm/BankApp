@@ -1,11 +1,11 @@
 import { InvalidArgumentException } from "@helpers/errors/InvalidArgumentException";
-import { Account, AccountAttributes, AccountCreationAttributes } from "@models/Account";
+import { IAccount } from "@models/Account";
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 import AccountRepository from '@repositories/AccountRepository';
-import { Payment } from "@models/Payment";
-import { Deposit } from "@models/Deposit";
-import { Withdraw } from "@models/Withdraw";
+import { IPayment } from "@models/Payment";
+import { IDeposit } from "@models/Deposit";
+import { IWithdraw } from "@models/Withdraw";
 
 export default class AccountService {
 
@@ -16,7 +16,7 @@ export default class AccountService {
         this.accountRepository = new AccountRepository();
     }
 
-    async create(account: AccountCreationAttributes): Promise<Account> {
+    async create(account: IAccount): Promise<IAccount> {
 
         this.validate(account);
 
@@ -27,58 +27,58 @@ export default class AccountService {
         return createdAccount;
     }
 
-    async getAll(): Promise<Account[]> {
+    async getAll(): Promise<IAccount[]> {
 
         const accounts = await this.accountRepository.getAll();
 
         return accounts;
     }
 
-    async getById(id: number): Promise<Account|null> {
+    async getById(id: number): Promise<IAccount|null> {
 
         const account = await this.accountRepository.getById(id);
 
         return account;
     }
 
-    async getAccountPaymentsById(id: number): Promise<Payment[]|undefined> {
+    async getAccountPaymentsById(id: number): Promise<IPayment[]|undefined> {
 
         const account = await this.accountRepository.getById(id);
 
         return account?.payments;
     }
 
-    async getAccountDepositsById(id: number): Promise<Deposit[]|undefined> {
+    async getAccountDepositsById(id: number): Promise<IDeposit[]|undefined> {
 
         const account = await this.accountRepository.getById(id);
 
         return account?.deposits;
     }
 
-    async getAccountWithdrawalsById(id: number): Promise<Withdraw[]|undefined> {
+    async getAccountWithdrawalsById(id: number): Promise<IWithdraw[]|undefined> {
 
         const account = await this.accountRepository.getById(id);
 
         return account?.withdrawals;
     }
 
-    async update(id: number, updateData: Partial<AccountCreationAttributes>): Promise<Account | undefined> {
+    async update(id: number, updateData: Partial<IAccount>): Promise<boolean | undefined> {
         const account = await this.accountRepository.getById(id);
 
         if(account == null) 
             throw new InvalidArgumentException("Invalid account identifier.");
 
-        let accountData: AccountCreationAttributes = { ...account, ...updateData } as AccountCreationAttributes;
+        let accountData: IAccount = { ...account, ...updateData } as IAccount;
 
         this.validate(accountData);
 
-        const updatedAccount = await this.accountRepository.update(account!, accountData)
+        const isUpdated = await this.accountRepository.update(id, account!)
 
-        return updatedAccount;
+        return isUpdated;
     }
 
 
-    validate(account: AccountCreationAttributes | AccountAttributes): void {
+    validate(account: IAccount): void {
 
         if (validator.isEmpty(account.name!))
             throw new InvalidArgumentException("Account name invalid.");

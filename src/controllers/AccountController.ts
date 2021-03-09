@@ -1,7 +1,7 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
 import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
-import { AccountCreationAttributes } from '@models/Account';
+import { IAccount } from '@models/Account';
 import EntityCollectionResponse from '@models/responses/EntityCollectionResponse';
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
@@ -18,9 +18,9 @@ export default class AccountController {
 
     public postCreate = async(req: Request, res: Response) : Promise<Response> => {
         try{
-            let { name, accountNumber, password }: { name: string, accountNumber: number, password: string,}  = req.body;
+            let { name, password }: { name: string, password: string,}  = req.body;
             
-            const account = {name, accountNumber, password} as AccountCreationAttributes;
+            const account = {name, password} as IAccount;
 
             const createdAccount = await this.accountService.create(account);
             
@@ -54,6 +54,7 @@ export default class AccountController {
             return res.status(status).send(response);
         }
         catch(error){
+            console.log("ERROR get All: " + error);
             let status = HttpStatus.INTERNAL_SERVER_ERROR;
             let errorResponse = new ErrorResponse(req.url);
             

@@ -1,73 +1,45 @@
-import { Association, DataTypes, HasManyAddAssociationMixin, HasManyGetAssociationsMixin, Model, Optional, Sequelize } from "sequelize";
-import { Payment } from "./Payment";
-import { Withdraw } from "./Withdraw";
-import { Deposit } from "./Deposit";
+import { IDeposit } from '@models/Deposit';
+import { IPayment } from '@models/Payment';
+import { IWithdraw } from '@models/Withdraw';
+import mongoose, { Schema, model, Document } from 'mongoose';
 
-export interface AccountAttributes {
-	id: number;
-	name: string;
+export interface IAccount extends Document {
+    name: string;
     password: string;
     balance?: number;
+    withdrawals?: IWithdraw[];
+    deposits?: IDeposit[];
+    payments?: IPayment[];
 }
 
-export interface AccountCreationAttributes extends Optional<AccountAttributes, "id"> { }
+const accountSchema = new Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    balance: {
+        type: String,
+        required: false
+    },
+    withdrawals: {
+        type: Schema.Types.ObjectId,
+        ref: "Withdraw"
+    },
+    deposits: {
+        type: Schema.Types.ObjectId,
+        ref: "Deposit"
+    },
+    payments: {
+        type: Schema.Types.ObjectId,
+        ref: "Payment"
+    }
+},
+    {
+        timestamps: { createdAt: true, updatedAt: true }
+    });
 
-export class Account extends Model<AccountAttributes, AccountCreationAttributes> {
-    public id!: number;
-    public name!: string;
-    public password: string;
-    public balance: number;
-    
-    public payments: Payment[];
-    public withdrawals: Withdraw[];
-    public deposits: Deposit[];
-
-    public createPayment!: HasManyAddAssociationMixin<Payment, number>;
-    public getPayment!: HasManyGetAssociationsMixin<Payment>;
-    public createWithdraw!: HasManyAddAssociationMixin<Withdraw, number>;
-    public getWithdraw!: HasManyGetAssociationsMixin<Withdraw>;
-    public createDeposit!: HasManyAddAssociationMixin<Deposit, number>;
-    public getDeposit!: HasManyGetAssociationsMixin<Deposit>;
-
-    public static associations: {
-		payments: Association<Payment, Account>;
-		withdrawals: Association<Withdraw, Account>;
-		deposits: Association<Deposit, Account>;
-	};
-}
-
-export const initAccount = (sequelize: Sequelize) => {
-	Account.init(
-		{
-			id: {
-				type: DataTypes.INTEGER,
-				autoIncrement: true,
-				primaryKey: true
-			},
-            name: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            password: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            balance: {
-                type: DataTypes.DECIMAL,
-                defaultValue: 0
-            }
-		},
-		{
-			tableName: "Account",
-			timestamps: false,
-      		paranoid: true,
-			sequelize: sequelize
-		}
-	);
-}
-
-export const associateAccount = () => {
-	Account.hasMany(Withdraw);
-	Account.hasMany(Payment);
-	Account.hasMany(Deposit);
-};
+export default mongoose.model<IAccount>('Accounts', accountSchema);

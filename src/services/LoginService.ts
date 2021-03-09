@@ -1,6 +1,3 @@
-import { InvalidArgumentException } from "@helpers/errors/InvalidArgumentException";
-import { Account, AccountAttributes, AccountCreationAttributes } from "@models/Account";
-import validator from 'validator';
 import bcrypt from 'bcrypt';
 import AccountRepository from '@repositories/AccountRepository'; 
 import Login from "@models/Login";

@@ -1,16 +1,17 @@
-import { Deposit, DepositCreationAttributes } from "@models/Deposit";
+import Deposit, { IDeposit } from "@models/Deposit";
 
 export default class DepositRepository {
 
-    async getById(id: number): Promise<Deposit | null> {
-        const deposit = await Deposit.findByPk(id, { include: [{ all: true }] });
+    async getById(id: number): Promise<IDeposit | null> {
+        const deposit = await Deposit.findById(id)
+            .populate("account");
 
         return deposit;
     }
 
-    async add(account: DepositCreationAttributes): Promise<Deposit> {
+    async add(deposit: IDeposit): Promise<IDeposit> {
 
-        const createdDeposit = await Deposit.create(account);
+        const createdDeposit = await Deposit.create(deposit);
 
         return createdDeposit;
     }

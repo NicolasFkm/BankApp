@@ -1,4 +1,4 @@
-import { Payment, PaymentCreationAttributes } from "@models/Payment";
+import { IPayment } from "@models/Payment";
 import PaymentRepository from "@repositories/PaymentRepository";
 
 export default class PaymentService {
@@ -9,14 +9,14 @@ export default class PaymentService {
         this.paymentRepository = new PaymentRepository();
     }
 
-    async create(account: PaymentCreationAttributes): Promise<Payment> {
+    async create(account: IPayment): Promise<IPayment> {
 
         const createdPayment = await this.paymentRepository.add(account);
 
         return createdPayment;
     }
 
-    async getById(id: number): Promise<Payment|null> {
+    async getById(id: number): Promise<IPayment|null> {
 
         const account = await this.paymentRepository.getById(id);
 

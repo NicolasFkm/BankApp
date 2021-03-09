@@ -1,30 +1,33 @@
-import { Account, AccountCreationAttributes } from "@models/Account";
+import Account, { IAccount } from "@models/Account";
 
 export default class AccountRepository {
 
-    async getById(id: number): Promise<Account | null> {
-        const account = await Account.findByPk(id, { include: [{ all: true }] });
+    async getById(id: number): Promise<IAccount | null> {
+        const account = await Account.findById(id)
+            .populate("Deposits")
+            .populate("Payments")
+            .populate("Withdrawals")
 
         return account;
     }
 
-    async getAll(): Promise<Account[]> {
-        const account = await Account.findAll({ include: [{ all: true }] });
+    async getAll(): Promise<IAccount[]> {
+        const account = await Account.find();
 
         return account;
     }
 
-    async add(account: AccountCreationAttributes): Promise<Account> {
+    async add(account: IAccount): Promise<IAccount> {
 
         const createdAccount = await Account.create(account);
 
         return createdAccount;
     }
 
-    async update(account: Account, updateData: Partial<AccountCreationAttributes>): Promise<Account | undefined> {
-        const updatedAccount = await account?.update(updateData)
+    async update(id: number, updateData: IAccount): Promise<boolean> {
+        const updatedResult = await Account.updateOne({id}, updateData);
 
-        return updatedAccount;
+        return updatedResult.nModified > 0;
     }
 
 }

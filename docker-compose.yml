@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  bank-app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.nodejs
+    command: nodemon --legacy-watch src/app.ts
+    image: bank-app
+    container_name: bankApp
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MONGO_INITDB_DATABASE=$MONGO_INITDB_DATABASE
+      - MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD
+      - DATABASE_PORT=$DATABASE_PORT
+      - PORT=$PORT
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/home/node/app
+      - node_modules:/home/node/app/node_modules
+    networks:
+      - app-network
+  bank-data:
+    image: 'mongo:4.0.23'
+    container_name: bank-data
+    restart: always
+    env_file: .env
+    environment:
+      - MONGO_INITDB_DATABASE=$MONGO_INITDB_DATABASE
+      - MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_INITDB_ROOT_PASSWORD
+      - DATABASE_PORT=$DATABASE_PORT
+    ports:
+      - '27017:27017'
+    volumes:
+      - ./mongo-volume:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo-volume:
+  node_modules:

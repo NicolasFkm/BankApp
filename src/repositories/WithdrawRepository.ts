@@ -1,16 +1,16 @@
-import { Withdraw, WithdrawCreationAttributes } from "@models/Withdraw";
+import Withdraw, { IWithdraw } from "@models/Withdraw";
 
 export default class WithdrawRepository {
 
-    async getById(id: number): Promise<Withdraw | null> {
-        const withdraw = await Withdraw.findByPk(id, { include: [{ all: true }] });
+    async getById(id: number): Promise<IWithdraw | null> {
+        const withdraw = await Withdraw.findById(id);
 
         return withdraw;
     }
 
-    async add(account: WithdrawCreationAttributes): Promise<Withdraw> {
+    async add(withdraw: IWithdraw): Promise<IWithdraw> {
 
-        const createdWithdraw = await Withdraw.create(account);
+        const createdWithdraw = await Withdraw.create(withdraw);
 
         return createdWithdraw;
     }

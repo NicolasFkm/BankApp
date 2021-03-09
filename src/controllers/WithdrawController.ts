@@ -1,7 +1,7 @@
 import { HttpStatus } from '@enumerators/HttpStatus';
 import { DataNotFoundException } from '@helpers/errors/DataNotFoundException';
 import { InvalidArgumentException } from '@helpers/errors/InvalidArgumentException';
-import { WithdrawCreationAttributes } from '@models/Withdraw';
+import { IWithdraw } from '@models/Withdraw';
 import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
 import WithdrawService from '@services/WithdrawService';
@@ -19,7 +19,7 @@ export default class WithdrawController {
         try {
             let { value }: { value: number } = req.body;
 
-            const withdraw = { value } as WithdrawCreationAttributes;
+            const withdraw = { value } as IWithdraw;
 
             const createdWithdraw = await this.withdrawService.create(withdraw);
 
