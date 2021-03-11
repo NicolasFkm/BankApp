@@ -1,8 +1,9 @@
 import Account, { IAccount } from "@models/Account";
+import {Types} from 'mongoose';
 
 export default class AccountRepository {
 
-    async getById(id: number): Promise<IAccount | null> {
+    async getById(id: string): Promise<IAccount | null> {
         const account = await Account.findById(id)
             .populate("Deposits")
             .populate("Payments")
@@ -24,10 +25,15 @@ export default class AccountRepository {
         return createdAccount;
     }
 
-    async update(id: number, updateData: IAccount): Promise<boolean> {
-        const updatedResult = await Account.updateOne({id}, updateData);
+    async update(id: string, updateData: IAccount): Promise<boolean> {
+        const account = await Account.findById(id)
 
-        return updatedResult.nModified > 0;
+        if(account == null) return false;
+
+        account!.balance = updateData.balance;
+        account.save();
+
+        return account != null;
     }
 
 }

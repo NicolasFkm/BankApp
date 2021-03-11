@@ -16,7 +16,7 @@ export default class LoginController {
 
     public postAuthenticate =  async (req: Request, res: Response) : Promise<void> => {
         try{
-            let { id, password, ...body}: {id: number, password:string, body: any}  = req.body;
+            let { id, password, ...body}: {id: string, password:string, body: any}  = req.body;
             
             const login = new Login(id, password);
 

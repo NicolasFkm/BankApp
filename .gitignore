@@ -117,3 +117,4 @@ dist
 
 # SQLite db
 *.db
+mongo-volume/

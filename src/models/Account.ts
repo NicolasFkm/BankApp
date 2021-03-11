@@ -6,7 +6,7 @@ import mongoose, { Schema, model, Document } from 'mongoose';
 export interface IAccount extends Document {
     name: string;
     password: string;
-    balance?: number;
+    balance: number;
     withdrawals?: IWithdraw[];
     deposits?: IDeposit[];
     payments?: IPayment[];
@@ -22,8 +22,9 @@ const accountSchema = new Schema({
         required: true
     },
     balance: {
-        type: String,
-        required: false
+        type: Number,
+        required: false,
+        default: 0
     },
     withdrawals: {
         type: Schema.Types.ObjectId,

@@ -1,7 +1,7 @@
-import MongooseDb from '@helpers/database/mongoose';
 import App from 'app';
 import dotenv from 'dotenv';
 import mongoose from "mongoose";
+import IncomeWorker from "./workers/IncomeWorker";
 
 dotenv.config();
 
@@ -15,23 +15,27 @@ const MONGO_DB_ADMIN = "admin";
 
 (async () => {
     try {
-        
+
         await mongoose.connect(`mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${DATABASE_URL}:${DATABASE_PORT}/${MONGO_DB_ADMIN}?authSource=${MONGO_DB_ADMIN}&w=1&authMechanism=SCRAM-SHA-256`, {
             useUnifiedTopology: true,
             useNewUrlParser: true,
             useCreateIndex: true,
             auth: {
-                user:MONGO_USERNAME,
+                user: MONGO_USERNAME,
                 password: MONGO_PASSWORD
             }
         });
-        // const mongoose = new MongooseDb();
-        // await mongoose.connect(DATABASE_URL, MONGO_DATABASE, DATABASE_PORT, MONGO_USERNAME, MONGO_PASSWORD);
+
         console.log('Connection has been established successfully.');
         const app = new App().app;
         app.listen(PORT, () => {
             console.log(`SERVER ON at ${PORT}`);
         });
+
+        const worker = new IncomeWorker();
+        const rule = worker.BuildDefaultRecurrenceRule();
+        worker.Schedule(rule);
+
     }
     catch (error) {
         console.log(error);

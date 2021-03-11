@@ -7,6 +7,7 @@ import EntityResponse from '@models/responses/EntityResponse';
 import ErrorResponse from '@models/responses/ErrorResponse';
 import AccountService from '@services/AccountService';
 import { Response, Request } from 'express';
+import { Types } from 'mongoose';
 
 export default class AccountController {
 
@@ -18,9 +19,9 @@ export default class AccountController {
 
     public postCreate = async(req: Request, res: Response) : Promise<Response> => {
         try{
-            let { name, password }: { name: string, password: string,}  = req.body;
+            let { name, password, balance }: { name: string, password: string, balance: number}  = req.body;
             
-            const account = {name, password} as IAccount;
+            const account = {name, password, balance} as IAccount;
 
             const createdAccount = await this.accountService.create(account);
             
@@ -70,8 +71,7 @@ export default class AccountController {
     public getById = async(req: Request, res: Response) : Promise<Response> => {
         try{
             let { id } = req.params;
-            
-            const account = await this.accountService.getById(+id);
+            const account = await this.accountService.getById(id);
             
             if(account == null){
                 throw new DataNotFoundException();
@@ -105,7 +105,7 @@ export default class AccountController {
         try{
             let { id } = req.params;
             
-            const payments = await this.accountService.getAccountPaymentsById(+id);
+            const payments = await this.accountService.getAccountPaymentsById(id);
             
             if(payments == undefined || payments.length ==  0){
                 throw new DataNotFoundException();
@@ -139,7 +139,7 @@ export default class AccountController {
         try{
             let { id } = req.params;
             
-            const deposits = await this.accountService.getAccountDepositsById(+id);
+            const deposits = await this.accountService.getAccountDepositsById(id);
             
             if(deposits == undefined || deposits.length == 0 ){
                 throw new DataNotFoundException();
@@ -173,7 +173,7 @@ export default class AccountController {
         try{
             let { id } = req.params;
             
-            const withdrawals = await this.accountService.getAccountWithdrawalsById(+id);
+            const withdrawals = await this.accountService.getAccountWithdrawalsById(id);
             
             if(withdrawals == undefined || withdrawals.length == 0){
                 throw new DataNotFoundException();

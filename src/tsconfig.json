@@ -28,7 +28,8 @@
         "@repositories/*": ["repositories/*"],
         "@services/*": ["services/*"],
         "@helpers/*": ["helpers/*"],
-        "@utils/*": ["utils/*"]
+        "@utils/*": ["utils/*"],
+        "@workers/*": ["workers/*"]
       }
     },
     "include": ["./"],

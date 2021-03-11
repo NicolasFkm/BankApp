@@ -12,7 +12,7 @@ export default class AccountService {
     private _salt: number = 12;
     public accountRepository: AccountRepository;
 
-    constructor(){
+    constructor() {
         this.accountRepository = new AccountRepository();
     }
 
@@ -34,38 +34,37 @@ export default class AccountService {
         return accounts;
     }
 
-    async getById(id: number): Promise<IAccount|null> {
-
+    async getById(id: string): Promise<IAccount | null> {
         const account = await this.accountRepository.getById(id);
 
         return account;
     }
 
-    async getAccountPaymentsById(id: number): Promise<IPayment[]|undefined> {
+    async getAccountPaymentsById(id: string): Promise<IPayment[] | undefined> {
 
         const account = await this.accountRepository.getById(id);
 
         return account?.payments;
     }
 
-    async getAccountDepositsById(id: number): Promise<IDeposit[]|undefined> {
+    async getAccountDepositsById(id: string): Promise<IDeposit[] | undefined> {
 
         const account = await this.accountRepository.getById(id);
 
         return account?.deposits;
     }
 
-    async getAccountWithdrawalsById(id: number): Promise<IWithdraw[]|undefined> {
+    async getAccountWithdrawalsById(id: string): Promise<IWithdraw[] | undefined> {
 
         const account = await this.accountRepository.getById(id);
 
         return account?.withdrawals;
     }
 
-    async update(id: number, updateData: Partial<IAccount>): Promise<boolean | undefined> {
+    async update(id: string, updateData: Partial<IAccount>): Promise<boolean | undefined> {
         const account = await this.accountRepository.getById(id);
 
-        if(account == null) 
+        if (account == null)
             throw new InvalidArgumentException("Invalid account identifier.");
 
         let accountData: IAccount = { ...account, ...updateData } as IAccount;
@@ -77,6 +76,19 @@ export default class AccountService {
         return isUpdated;
     }
 
+    async processIncome(id: string, incomeTax: number): Promise<boolean | undefined> {
+        const account = await this.accountRepository.getById(id);
+        
+        if (account == null)
+        throw new InvalidArgumentException("Invalid account identifier.");
+        
+            let tax = 1 + incomeTax;
+            account.balance = account.balance! * tax;
+
+        const isUpdated = await this.accountRepository.update(id, account!);
+
+        return isUpdated;
+    }
 
     validate(account: IAccount): void {
 
